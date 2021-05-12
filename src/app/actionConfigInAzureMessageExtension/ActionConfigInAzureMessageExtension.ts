@@ -11,29 +11,43 @@ const log = debug("msteams");
 @PreventIframe("/actionConfigInAzureMessageExtension/action.html")
 export default class ActionConfigInAzureMessageExtension implements IMessagingExtensionMiddlewareProcessor {
     public async onFetchTask(context: TurnContext, value: MessagingExtensionQuery): Promise<MessagingExtensionResult | TaskModuleContinueResponse> {
-        if (false) { // !value.state TODO: implement logic when config is persisted
-            return Promise.resolve<MessagingExtensionResult>({
-                type: "config", // use "config" or "auth" here
-                suggestedActions: {
-                    actions: [
-                        {
-                            type: "openUrl",
-                            value: `https://${process.env.HOSTNAME}/actionConfigInAzureMessageExtension/config.html?name={loginHint}&tenant={tid}&group={groupId}&theme={theme}`,
-                            title: "Configuration"
-                        }
-                    ]
-                }
-            });
-        }
-
-        return Promise.resolve<TaskModuleContinueResponse>({
-            type: "continue",
-            value: {
-                title: "Input form",
-                url: `https://${process.env.HOSTNAME}/actionConfigInAzureMessageExtension/action.html?name={loginHint}&tenant={tid}&group={groupId}&theme={theme}`,
-                height: "medium"
+      const connectionString = process.env.AZURE_CONFIG_CONNECTION_STRING!;
+      const client = new AppConfigurationClient(connectionString);
+      let siteID = "";
+      let listID = "";
+      try {
+        const siteSetting = await client.getConfigurationSetting({ key: "SiteID"});
+        siteID = siteSetting.value!;
+        const listSetting = await client.getConfigurationSetting({ key: "ListID"});
+        listID = listSetting.value!;
+      }
+      catch(error) {
+        siteID = "";
+        listID = ""; 
+      }  
+      if (siteID==="" || listID ==="") { // 
+        return Promise.resolve<MessagingExtensionResult>({
+            type: "config", // use "config" or "auth" here
+            suggestedActions: {
+                actions: [
+                    {
+                        type: "openUrl",
+                        value: `https://${process.env.HOSTNAME}/actionConfigInAzureMessageExtension/config.html?name={loginHint}&tenant={tid}&group={groupId}&theme={theme}`,
+                        title: "Configuration"
+                    }
+                ]
             }
         });
+      }
+
+      return Promise.resolve<TaskModuleContinueResponse>({
+        type: "continue",
+        value: {
+            title: "Input form",
+            url: `https://${process.env.HOSTNAME}/actionConfigInAzureMessageExtension/action.html?name={loginHint}&tenant={tid}&group={groupId}&theme={theme}`,
+            height: "medium"
+        }
+      });
     }
 
     // handle action response in here
