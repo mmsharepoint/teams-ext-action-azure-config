@@ -1,4 +1,6 @@
-
+variables:
+  HOSTNAME:mmoteamsactionconfig.azurewebsites.net
+  GRAPH_APP_ID:fd18085b-835a-4397-86b5-73cc6170c38e
 trigger:
   - main
 
