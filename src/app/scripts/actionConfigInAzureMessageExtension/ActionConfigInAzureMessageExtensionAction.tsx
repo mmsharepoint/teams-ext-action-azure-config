@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Provider, Flex, Header, Input, Button, Text, List } from "@fluentui/react-northstar";
+import { Provider, Flex, Header, List } from "@fluentui/react-northstar";
 import { useState, useEffect } from "react";
 import { useTeams } from "msteams-react-base-component";
 import * as microsoftTeams from "@microsoft/teams-js";

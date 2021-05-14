@@ -6,6 +6,7 @@ import qs = require("qs");
 import * as debug from 'debug';
 import { IDocument } from "../../model/IDocument";
 import { AppConfigurationClient } from "@azure/app-configuration";
+import Utilities from "./Utilities";
 const log = debug('graphRouter');
 
 export const graphRouter = (options: any): express.Router =>  {
@@ -65,61 +66,49 @@ export const graphRouter = (options: any): express.Router =>  {
       "/files",
       pass.authenticate("oauth-bearer", { session: false }),
       async (req: any, res: express.Response, next: express.NextFunction) => {
-          const user: any = req.user;
-          let siteID = "";
-          let listID = "";
-          try {
-            const connectionString = process.env.AZURE_CONFIG_CONNECTION_STRING!;
-            const client = new AppConfigurationClient(connectionString);
-            const siteSetting = await client.getConfigurationSetting({ key: "SiteID"});
-            siteID = siteSetting.value!;
-            const listSetting = await client.getConfigurationSetting({ key: "ListID"});
-            listID = listSetting.value!;
+        const user: any = req.user;
+        const config = await Utilities.retrieveConfig();
+        if (config.SiteID === "") {
+          config.SiteID = process.env.SITE_ID!;
+        }
+        if (config.ListID === "") {
+          config.ListID = process.env.LIST_ID!;
+        }
+        
+        const requestUrl: string = `https://graph.microsoft.com/v1.0/sites/${config.SiteID}/lists/${config.ListID}/items?$expand=fields`;
+        
+        try {
+          const accessToken = await exchangeForToken(user.tid,
+              req.header("Authorization")!.replace("Bearer ", "") as string,
+              ["https://graph.microsoft.com/user.read"]);
+          log(accessToken);
+          Axios.get(requestUrl, {
+            headers: {          
+                Authorization: `Bearer ${accessToken}`
+            }})
+            .then(response => {
+                let docs: IDocument[] = [];
+                console.log(response.data.value);
+                response.data.value.forEach(element => {
+                  docs.push({
+                    name: element.fields.FileLeafRef,
+                    author: element.createdBy.user.displayName,
+                    url: element.webUrl,
+                    id: element.id,
+                    modified: new Date(element.lastModifiedDateTime)
+                  });
+                });                                            
+                res.json(docs);
+          }).catch(err => {
+              res.status(500).send(err);
+          });
+        } catch (err) {
+          if (err.status) {
+              res.status(err.status).send(err.message);
+          } else {
+              res.status(500).send(err);
           }
-          catch(error) {
-            if (siteID === "") {
-                siteID = process.env.SITE_ID!;
-            }
-            if (listID === "") {
-                listID = process.env.LIST_ID!;
-            }
-          }
-          
-          const requestUrl: string = `https://graph.microsoft.com/v1.0/sites/${siteID}/lists/${listID}/items?$expand=fields`;
-          
-          try {
-              const accessToken = await exchangeForToken(user.tid,
-                  req.header("Authorization")!.replace("Bearer ", "") as string,
-                  ["https://graph.microsoft.com/user.read"]);
-              log(accessToken);
-              Axios.get(requestUrl, {
-                headers: {          
-                    Authorization: `Bearer ${accessToken}`
-                }})
-                .then(response => {
-                    let docs: IDocument[] = [];
-                    console.log(response.data.value);
-                    response.data.value.forEach(element => {
-                      docs.push({
-                        name: element.fields.FileLeafRef,
-                        author: element.createdBy.user.displayName,
-                        url: element.webUrl,
-                        id: element.id,
-                        modified: new Date(element.lastModifiedDateTime)
-                      });
-                    });                                            
-                    res.json(docs);
-              }).catch(err => {
-                  res.status(500).send(err);
-              });
-          } catch (err) {
-              if (err.status) {
-                  res.status(err.status).send(err.message);
-              } else {
-                  res.status(500).send(err);
-              }
-          }
+        }
       });
-  
     return router;
   }
