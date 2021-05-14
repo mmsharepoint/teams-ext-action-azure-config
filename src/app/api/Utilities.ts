@@ -4,21 +4,7 @@ import { Config } from "../../model/Config";
 
 export default class Utilities {
   public static async retrieveConfig(): Promise<Config> {
-    const connectionString = process.env.AZURE_CONFIG_CONNECTION_STRING!;
-    // const credential = new DefaultAzureCredential();
-    // console.log(credential);
-    // const client = new AppConfigurationClient(connectionString, credential);
-    let client: AppConfigurationClient;
-    if (process.env.AZURE_CLIENT_SECRET) {
-      const credential = new EnvironmentCredential();
-      client = new AppConfigurationClient(connectionString, credential);
-    }
-    else {
-      const credential = new ManagedIdentityCredential();
-      console.log("Managed Identity used");
-      console.log(credential);
-      client = new AppConfigurationClient(connectionString, credential);
-    }
+    const client = this.getClient();
     let siteID = "";
     let listID = "";
     try {
@@ -39,13 +25,29 @@ export default class Utilities {
   }
 
   public static async saveConfig(newConfig: Config) {
-    const connectionString = process.env.AZURE_CONFIG_CONNECTION_STRING!;
-    const client = new AppConfigurationClient(connectionString);
+    const client = this.getClient();
     if (newConfig.SiteID) {
       await client.setConfigurationSetting({ key: "SiteID", value: newConfig.SiteID });
     }
     if (newConfig.ListID) {
       await client.setConfigurationSetting({ key: "ListID", value: newConfig.ListID });
     }
+  }
+
+  private static getClient(): AppConfigurationClient {
+    const connectionString = process.env.AZURE_CONFIG_CONNECTION_STRING!;
+    // const credential = new DefaultAzureCredential();
+    // console.log(credential);
+    // const client = new AppConfigurationClient(connectionString, credential);
+    let client: AppConfigurationClient;
+    if (process.env.AZURE_CLIENT_SECRET) {
+      const credential = new EnvironmentCredential();
+      client = new AppConfigurationClient(connectionString, credential);
+    }
+    else {
+      const credential = new ManagedIdentityCredential();
+      client = new AppConfigurationClient(connectionString, credential);
+    }
+    return client;
   }
 }
