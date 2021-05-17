@@ -1,8 +1,8 @@
 variables:
 - name: HOSTNAME
-  value: mmoteamsactionconfig.azurewebsites.net
+  value: 
 - name: GRAPH_APP_ID
-  value: fd18085b-835a-4397-86b5-73cc6170c38e
+  value: 
   
 trigger:
   - main

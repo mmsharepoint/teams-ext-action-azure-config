@@ -4,19 +4,20 @@ This sample is a action based messaging extension created using the Teams Yeoman
 The essential thing is that it is configurable and persists t's configuration to an Azure App Configuration resource.
 
 ![Configuration of Teams Messaging extension ...](https://mmsharepoint.files.wordpress.com/2021/05/08fetchtask_configurefirst.png?w=946)
-For further details see the author's [blog post](https://mmsharepoint.wordpress.com/)
+For further details see the author's [blog post](https://mmsharepoint.wordpress.com/2021/05/17/configure-teams-applications-with-azure-app-configuration-nodejs/)
 
 ## Prerequisites
 
 * [Office 365 tenant](https://dev.office.com/sharepoint/docs/spfx/set-up-your-development-environment)
 * [Node.js](https://nodejs.org) version 10.14.1 or higher
-* [ngrok](https://ngrok.com) or similar tunneling application is required for local testing
-* [Azure App Configuration](https://docs.microsoft.com/en-us/azure/azure-app-configuration/quickstart-aspnet-core-app?tabs=core5x#create-an-app-configuration-store) setup like mentioned here
-
     ```bash
     # determine node version
     node --version
     ```
+* [ngrok](https://ngrok.com) or similar tunneling application is required for local testing
+* [Azure App Configuration](https://docs.microsoft.com/en-us/azure/azure-app-configuration/quickstart-aspnet-core-app?tabs=core5x#create-an-app-configuration-store) setup like mentioned here
+
+
 ## Version history
 
 Version|Date|Author|Comments
@@ -75,11 +76,13 @@ Version|Date|Author|Comments
 npm i -g gulp gulp-cli
 gulp build
 ```
+## Features
+This is a simple Action based messaging extension. It offers documents retrieved from Microsoft Graph for selection and to be posted to the current Team's news channel.
+* SSO access token generation to access Microsoft Graph
+* [Post an adaptive card](https://adaptivecards.io/)
+* A configuration page to offer self service configuration of the SiteID and ListID where the documents reside
+* Configuraton storage in [Azure App Configuration](https://github.com/Azure/azure-sdk-for-js/tree/master/sdk/appconfiguration/app-configuration)
 
-
-## Configuration
-
-Configuration is stored in the `.env` file. 
 
 ## Debug and test locally
 
