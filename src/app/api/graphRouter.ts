@@ -5,7 +5,6 @@ import { BearerStrategy, VerifyCallback, IBearerStrategyOption, ITokenPayload } 
 import qs = require("qs");
 import * as debug from 'debug';
 import { IDocument } from "../../model/IDocument";
-import { AppConfigurationClient } from "@azure/app-configuration";
 import Utilities from "./Utilities";
 const log = debug('graphRouter');
 
@@ -30,12 +29,13 @@ export const graphRouter = (options: any): express.Router =>  {
     router.use(pass.initialize());
     pass.use(bearerStrategy);
   
-    const exchangeForToken = (tid: string, token: string, scopes: string[]): Promise<string> => {
+    const exchangeForToken = async (tid: string, token: string, scopes: string[]): Promise<string> => {
+      const appSecret = await Utilities.getSecret("TeamsAzureConfig-GRAPHAPPSECRET");
       return new Promise((resolve, reject) => {
           const url = `https://login.microsoftonline.com/${tid}/oauth2/v2.0/token`;
           const params = {
               client_id: process.env.GRAPH_APP_ID,
-              client_secret: process.env.GRAPH_APP_SECRET,
+              client_secret: appSecret, // process.env.GRAPH_APP_SECRET,
               grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
               assertion: token,
               requested_token_use: "on_behalf_of",

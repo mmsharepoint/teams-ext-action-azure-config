@@ -1,5 +1,6 @@
 import { AppConfigurationClient } from "@azure/app-configuration";
 import { DefaultAzureCredential, EnvironmentCredential, ManagedIdentityCredential } from "@azure/identity";
+import { SecretClient } from "@azure/keyvault-secrets";
 import { Config } from "../../model/Config";
 
 export default class Utilities {
@@ -47,6 +48,32 @@ export default class Utilities {
     else {
       const credential = new ManagedIdentityCredential();
       client = new AppConfigurationClient(connectionString, credential);
+    }
+    return client;
+  }
+
+  public static async getSecret(name: string): Promise<string> {
+    const client = this.getSecretClient();
+    try {
+      const secret = await client.getSecret(name);
+      return secret.value!;
+    }
+    catch (err) {
+      console.log(err);
+      return "";
+    }
+  }
+
+  private static getSecretClient(): SecretClient {
+    const connectionString = process.env.AZURE_KEYVAULT_CONNECTION_STRING!;
+    let client: SecretClient;
+    if (process.env.AZURE_CLIENT_SECRET) {
+      const credential = new EnvironmentCredential();
+      client = new SecretClient(connectionString, credential);
+    }
+    else {
+      const credential = new ManagedIdentityCredential();
+      client = new SecretClient(connectionString, credential);
     }
     return client;
   }

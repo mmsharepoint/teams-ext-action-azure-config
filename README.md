@@ -16,6 +16,7 @@ For further details see the author's [blog post](https://mmsharepoint.wordpress.
     ```
 * [ngrok](https://ngrok.com) or similar tunneling application is required for local testing
 * [Azure App Configuration](https://docs.microsoft.com/en-us/azure/azure-app-configuration/quickstart-aspnet-core-app?tabs=core5x#create-an-app-configuration-store) setup like mentioned here
+* [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/)
 
 
 ## Version history
@@ -62,9 +63,11 @@ Version|Date|Author|Comments
   - with **delegated** permissions email, offline_access, openid, profile, Sites.Read.All
   - With exposed Api "access_as_user" and App ID Uri api://<NGrok-Url>/<App ID>
   - With the client IDs for Teams App and Teams Web App 1fec8e78-bce4-4aaf-ab1b-5451cc387264 and 5e3ce6c0-2b1f-4285-8d4b-75ee78787346
-- Also add the app ID and its secret to .env as GRAPH_APP_ID= and GRAPH_APP_SECRET=
+- Also add the app ID and its secret to .env as GRAPH_APP_ID= and 
+    - add the secret to your Azure Key Vault as "TeamsAzureConfig-GRAPHAPPSECRET"
 - Add your configured App Configuration Http endpoint to .env as AZURE_CONFIG_CONNECTION_STRING
-- Register another app and secret and insert it to your .env as AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET and grant access to the Azure App Configuration if you need to debug locally
+- Add your Key Vault Url (https://<Your Key Vault Name.vault.azure.net/)  to .env as AZURE_KEYVAULT_CONNECTION_STRING
+- Register another app and secret and insert it to your .env as AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET and grant access to the Azure App Configuration and Azure Key Vault if you need to debug locally
 - Generate and upload the application package
   ```bash
   gulp manifest
@@ -82,6 +85,7 @@ This is a simple Action based messaging extension. It offers documents retrieved
 * [Post an adaptive card](https://adaptivecards.io/)
 * A configuration page to offer self service configuration of the SiteID and ListID where the documents reside
 * Configuraton storage in [Azure App Configuration](https://github.com/Azure/azure-sdk-for-js/tree/master/sdk/appconfiguration/app-configuration)
+* Secret Storage and consumption in [Azure Key Vault](https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/keyvault/keyvault-secrets/samples/typescript/src/helloWorld.ts)
 
 
 ## Debug and test locally
