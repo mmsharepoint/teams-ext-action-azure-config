@@ -8,11 +8,17 @@ export default class Utilities {
     const client = this.getClient();
     let siteID = "";
     let listID = "";
+    let useSearch: boolean = false;
+    let contentType: string = "";
     try {
       const siteSetting = await client.getConfigurationSetting({ key: "SiteID"});
       siteID = siteSetting.value!;
       const listSetting = await client.getConfigurationSetting({ key: "ListID"});
       listID = listSetting.value!;
+      const useSearchSetting = await client.getConfigurationSetting({ key: "UseSearch" });
+      useSearch = useSearchSetting.value?.toLowerCase() === "true" ? true : false;
+      const contentTypeSetting = await client.getConfigurationSetting({ key: "ContentType" });
+      contentType = contentTypeSetting.value!;
     }
     catch(error) {
       if (siteID === "") {
@@ -22,7 +28,7 @@ export default class Utilities {
         //  listID = process.env.LIST_ID!;
       }
     }
-    return Promise.resolve({ SiteID: siteID, ListID: listID})
+    return Promise.resolve({ SiteID: siteID, ListID: listID, UseSearch: useSearch, ContentType: contentType });
   }
 
   public static async saveConfig(newConfig: Config) {
@@ -32,7 +38,11 @@ export default class Utilities {
     }
     if (newConfig.ListID) {
       await client.setConfigurationSetting({ key: "ListID", value: newConfig.ListID });
+    }    
+    if (newConfig.ContentType) {
+      await client.setConfigurationSetting({ key: "ContentType", value: newConfig.ContentType });
     }
+    await client.setConfigurationSetting({ key: "UseSearch", value: newConfig.UseSearch.toString() });
   }
 
   private static getClient(): AppConfigurationClient {
