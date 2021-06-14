@@ -13,7 +13,7 @@ export const ActionConfigInAzureMessageExtensionConfig = () => {
     const [siteID, setSiteID] = useState<string>();
     const [listID, setListID] = useState<string>();
     const [useSearch, setUseSearch] = useState<boolean>(false);
-    const [contentType, setContentType] = useState<string>();
+    const [searchQuery, setSearchQuery] = useState<string>();
 
     useEffect(() => {
         const initialSiteID = getQueryVariable("siteID");
@@ -22,8 +22,8 @@ export const ActionConfigInAzureMessageExtensionConfig = () => {
         setListID(initialListID);
         const useSearchStr = getQueryVariable("useSearch");
         setUseSearch(useSearchStr?.toLowerCase() === "true" ? true : false);
-        const initialContentType = getQueryVariable("contentType");
-        setContentType(initialContentType);
+        const initialSearchQuery = getQueryVariable("searchQuery");
+        setSearchQuery(initialSearchQuery);
         if (inTeams === true) {
             microsoftTeams.appInitialization.notifySuccess();
         }
@@ -38,7 +38,7 @@ export const ActionConfigInAzureMessageExtensionConfig = () => {
             siteID: siteID,
             listID: listID,
             useSearch: useSearch,
-            contentType: contentType
+            searchQuery: searchQuery
         }));
     };
 
@@ -77,15 +77,15 @@ export const ActionConfigInAzureMessageExtensionConfig = () => {
                                   toggle
                                   checked={useSearch}
                                   onChange={onUseSearchChanged} />
-                        <Text content="Search for Content Type: " />
-                        <Input placeholder="Enter a content-type id such as 0x0101*"
+                        <Text content="Search Query: " />
+                        <Input placeholder="Enter a search query such as ContentTypeId:0x0101*"
                             fluid
                             clearable
-                            value={contentType}
+                            value={searchQuery}
                             disabled={!useSearch}
                             onChange={(e, data) => {
                                 if (data) {
-                                    setContentType(data.value);
+                                    setSearchQuery(data.value);
                                 }
                             }}
                             required />
