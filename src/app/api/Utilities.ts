@@ -9,7 +9,7 @@ export default class Utilities {
     let siteID = "";
     let listID = "";
     let useSearch: boolean = false;
-    let contentType: string = "";
+    let searchQuery: string = "";
     try {
       const siteSetting = await client.getConfigurationSetting({ key: "SiteID"});
       siteID = siteSetting.value!;
@@ -17,8 +17,8 @@ export default class Utilities {
       listID = listSetting.value!;
       const useSearchSetting = await client.getConfigurationSetting({ key: "UseSearch" });
       useSearch = useSearchSetting.value?.toLowerCase() === "true" ? true : false;
-      const contentTypeSetting = await client.getConfigurationSetting({ key: "ContentType" });
-      contentType = contentTypeSetting.value!;
+      const searchQuerySetting = await client.getConfigurationSetting({ key: "SearchQuery" });
+      searchQuery = searchQuerySetting.value!;
     }
     catch(error) {
       if (siteID === "") {
@@ -28,7 +28,7 @@ export default class Utilities {
         //  listID = process.env.LIST_ID!;
       }
     }
-    return Promise.resolve({ SiteID: siteID, ListID: listID, UseSearch: useSearch, ContentType: contentType });
+    return Promise.resolve({ SiteID: siteID, ListID: listID, UseSearch: useSearch, SearchQuery: searchQuery });
   }
 
   public static async saveConfig(newConfig: Config) {
@@ -40,7 +40,7 @@ export default class Utilities {
       await client.setConfigurationSetting({ key: "ListID", value: newConfig.ListID });
     }    
     if (newConfig.SearchQuery) {
-      await client.setConfigurationSetting({ key: "ContentType", value: newConfig.SearchQuery });
+      await client.setConfigurationSetting({ key: "SearchQuery", value: newConfig.SearchQuery });
     }
     await client.setConfigurationSetting({ key: "UseSearch", value: newConfig.UseSearch.toString() });
   }
