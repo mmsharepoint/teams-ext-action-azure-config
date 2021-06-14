@@ -78,11 +78,7 @@ export const ActionConfigInAzureMessageExtensionConfig = () => {
                                   checked={useSearch}
                                   onChange={onUseSearchChanged} />
                         <Text content="Search Query: " />
-<<<<<<< HEAD
                         <Input placeholder="Enter a search query such as ContentTypeId:0x0101*"
-=======
-                        <Input placeholder="Enter a search query such as contentType:0x0101*"
->>>>>>> 82a760900f250abe394cdcd65cb23e5b75221bfd
                             fluid
                             clearable
                             value={searchQuery}
