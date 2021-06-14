@@ -88,7 +88,7 @@ export const graphRouter = (options: any): express.Router =>  {
     });                                            
     return docs;
   };
-  const getFilesBySearch = async (accessToken: string): Promise<IDocument[]> => {
+  const getFilesBySearch = async (accessToken: string, searchQuery: string): Promise<IDocument[]> => {
     const requestUrl = `https://graph.microsoft.com/v1.0/search/query`;
     const reqeustBody = {
       requests: [
@@ -97,7 +97,7 @@ export const graphRouter = (options: any): express.Router =>  {
                   "listItem"
               ],
               query: {
-                  "queryString": `ContentTypeId:0x0101*`
+                  "queryString": searchQuery,
               },
               fields: [
                   "title",
@@ -149,7 +149,8 @@ export const graphRouter = (options: any): express.Router =>  {
             ["https://graph.microsoft.com/user.read"]);
         let docs: IDocument[] = [];
         if (config.UseSearch) {
-          docs = await getFilesBySearch(accessToken);
+          const query = config.SearchQuery && config.SearchQuery !== "" ? config.SearchQuery : "*";
+          docs = await getFilesBySearch(accessToken, query);
         }
         else {
           docs = await getFilesBySite(accessToken, config);
