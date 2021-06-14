@@ -39,8 +39,8 @@ export default class Utilities {
     if (newConfig.ListID) {
       await client.setConfigurationSetting({ key: "ListID", value: newConfig.ListID });
     }    
-    if (newConfig.ContentType) {
-      await client.setConfigurationSetting({ key: "ContentType", value: newConfig.ContentType });
+    if (newConfig.SearchQuery) {
+      await client.setConfigurationSetting({ key: "ContentType", value: newConfig.SearchQuery });
     }
     await client.setConfigurationSetting({ key: "UseSearch", value: newConfig.UseSearch.toString() });
   }
