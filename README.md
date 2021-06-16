@@ -61,12 +61,12 @@ Version|Date|Author|Comments
 - You will furthermore need to register an app in Azure AD [also described here](https://mmsharepoint.wordpress.com/2020/07/03/a-microsoft-teams-messaging-extension-with-authentication-and-access-to-microsoft-graph-i/)
   - with client secret
   - with **delegated** permissions email, offline_access, openid, profile, Sites.Read.All
-  - With exposed Api "access_as_user" and App ID Uri api://<NGrok-Url>/<App ID>
+  - With exposed Api "access_as_user" and App ID Uri api://*_NGrok-Url_*/*_App ID_*
   - With the client IDs for Teams App and Teams Web App 1fec8e78-bce4-4aaf-ab1b-5451cc387264 and 5e3ce6c0-2b1f-4285-8d4b-75ee78787346
 - Also add the app ID and its secret to .env as GRAPH_APP_ID= and 
     - add the secret to your Azure Key Vault as "TeamsAzureConfig-GRAPHAPPSECRET"
 - Add your configured App Configuration Http endpoint to .env as AZURE_CONFIG_CONNECTION_STRING
-- Add your Key Vault Url (https://<Your Key Vault Name.vault.azure.net/)  to .env as AZURE_KEYVAULT_CONNECTION_STRING
+- Add your Key Vault Url (https://*_Your Key Vault Name_*.vault.azure.net/)  to .env as AZURE_KEYVAULT_CONNECTION_STRING
 - Register another app and secret and insert it to your .env as AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET and grant access to the Azure App Configuration and Azure Key Vault if you need to debug locally
 - Generate and upload the application package
   ```bash
@@ -82,6 +82,8 @@ gulp build
 ## Features
 This is a simple Action based messaging extension. It offers documents retrieved from Microsoft Graph for selection and to be posted to the current Team's news channel.
 * SSO access token generation to access Microsoft Graph
+    * Retrieves documents either via listItems from site / list or
+    * Uses search to retrieve them independently from sites / lists [Blog post](https://mmsharepoint.wordpress.com/2021/06/16/query-sharepoint-items-with-microsoft-graph-and-search/)
 * [Post an adaptive card](https://adaptivecards.io/)
 * A configuration page to offer self service configuration of the SiteID and ListID where the documents reside
 * Configuraton storage in [Azure App Configuration](https://github.com/Azure/azure-sdk-for-js/tree/master/sdk/appconfiguration/app-configuration)
