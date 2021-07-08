@@ -77,6 +77,7 @@ export const ActionConfigInAzureMessageExtensionConfig = () => {
                                   toggle
                                   checked={useSearch}
                                   onChange={onUseSearchChanged} />
+                        <br/>
                         <Text content="Search Query: " />
                         <Input placeholder="Enter a search query such as ContentTypeId:0x0101*"
                             fluid
